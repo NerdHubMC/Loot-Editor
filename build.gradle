@@ -1,0 +1,92 @@
+plugins {
+	//id 'moe.nikky.fabric-loom' version '0.2.6-SNAPSHOT'
+    id "fabric-loom" version "0.2.5-SNAPSHOT"
+    id "com.matthewprenger.cursegradle" version "1.2.0"
+    id "maven-publish"
+    id "java-library"
+}
+
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
+
+group = "com.github.NerdHubMC"
+archivesBaseName = "LootEditor"
+version = System.getenv("TRAVIS_TAG") ?: project.mod_version
+
+repositories {
+    mavenLocal()
+    maven {
+        name = "FabricMC"
+        url = "https://maven.fabricmc.net"
+    }
+    maven {
+        name = "TehNut"
+        url = "https://tehnut.info/maven"
+    }
+    maven {
+        name = "CottonMC"
+        url = "http://server.bbkr.space:8081/artifactory/libs-release"
+    }
+    maven {
+        name = "Cotton (snapshots)"
+        url = "http://server.bbkr.space:8081/artifactory/libs-snapshot"
+    }
+    maven {
+        name = "CurseForge"
+        url = "https://minecraft.curseforge.com/api/maven"
+    }
+    maven {
+        name = "JitPack"
+        url = "https://jitpack.io"
+    }
+}
+
+dependencies {
+    //boolean ideaCompositeBuild = Boolean.getBoolean("idea.sync.active") //A hack to allow composite builds in idea
+
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.minecraft_version}+build.${project.yarn_mappings}"
+    compileOnly "com.google.code.findbugs:jsr305:3.0.2"
+
+    modRuntime ("mcp.mobius.waila:Hwyla:${project.hwyla_version}") {
+        transitive = false
+    }
+
+    //modRuntime("me.shedaniel:RoughlyEnoughItems:${project.rei_version}")
+
+    modApi("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}")
+
+    modApi("io.github.cottonmc:LibGUI:1.2.0")
+
+    if(Boolean.getBoolean("idea.sync.active")) {
+        api("com.github.GlassPane:Mesh:+")
+    }
+    else {
+        modApi("com.github.GlassPane:Mesh:${project.mesh_version}")
+    }
+
+    modImplementation("net.fabricmc.fabric-api:fabric-events-interaction-v0:0.1.0+ea100f6142") { //fabric api fix
+        force = true
+    }
+
+    modApi("net.fabricmc:fabric-loader:${project.loader_version}")
+}
+
+apply from: "https://raw.githubusercontent.com/NerdHubMC/Gradle-Scripts/master/scripts/fabric/basic_project.gradle"
+
+processResources {
+    // this will ensure that this task is redone when there"s a change
+    inputs.property "version", project.version
+
+    // replace stuff in fabric.mod.json, nothing else
+    from(sourceSets.main.resources.srcDirs) {
+        include "fabric.mod.json"
+
+        // add mod metadata
+        expand "version": project.version
+    }
+
+    // copy everything else, that"s not the fabric.mod.json
+    from(sourceSets.main.resources.srcDirs) {
+        exclude "fabric.mod.json"
+    }
+}

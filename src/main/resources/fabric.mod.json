@@ -1,0 +1,40 @@
+{
+    "schemaVersion": 1,
+    "id": "loot_editor",
+    "name": "LootEditor",
+    "description": "A Pack Maker's way of editing loot tables",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "UpcraftLP",
+            "contact": {
+                "homepage": "https://twitter.com/UpcraftLP"
+            }
+        }
+    ],
+    "icon": "assets/loot_editor/icon.png",
+    "side": "universal",
+    "version": "${version}",
+    "depends": {
+        "fabric": "*"
+    },
+    "suggests": {
+        "roughlyenoughitems": "*",
+        "waila": "*",
+        "data-loader": "*"
+    },
+    "custom": {
+        "modmenu:api": true
+    },
+    "entrypoints": {
+        "main": [
+            "nerdhub.looteditor.LootEditor"
+        ],
+        "client": [
+            "nerdhub.looteditor.client.LootEditorClient"
+        ]
+    },
+    "mixins": [
+        "mixins.loot_editor.json"
+    ]
+}
